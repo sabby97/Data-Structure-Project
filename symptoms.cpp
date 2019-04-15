@@ -19,6 +19,7 @@ struct Patient // AKA diseases
   int pain;
   int date;
   int time;
+  Condition myCondition;
 };
 
 // BUILDING THE SYMPTOMS/CONDITION LIBRARY
