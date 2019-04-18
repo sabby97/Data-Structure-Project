@@ -6,11 +6,17 @@
 #include <queue>
 using namespace std;
 
+struct symptom{
+    string name;
+    set<condition*> conditions;
+    symptom* next = 0;
+};
 
 struct condition{
   string name;
   int priority;
-  set <symptom> symptoms;
+  set <symptom*> symptoms;
+  symptom* next = 0;
 
 };
 
@@ -28,6 +34,10 @@ public:
   void CreadFile(string file);
   void Cadd(condition* cond);
   int hashFunction(int);
+
+  symptom** ShashTable;
+  int ShashtableSize;
+  
 
 };
 
