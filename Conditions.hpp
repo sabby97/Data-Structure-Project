@@ -6,32 +6,38 @@
 #include <queue>
 using namespace std;
 
-struct Condition // AKA diseases
-{
+
+struct condition{
   string name;
-  string description;
   int priority;
-  set <string> symptoms;
+  set <symptom> symptoms;
+
 };
 
-struct Patient // AKA diseases
-{
-  string name;
-  int pain;
-  int date;
-  int time;
-  Condition myCondition;
-};
+
+class Conditions {// AKA diseases
+private:
+  Conditions();
+  ~Conditions();
+  unsigned int getHash(string word);
+
 
 public:
-  void createCondition(string name, string description, int priority);
-  Condition* searchCondition(string name);
-  void addPain(int pain);
-  void addName(string name);
+  condition** ChashTable;
+  int ChashTableSize;
+  void CreadFile(string file);
+  void Cadd(condition* cond);
+  int hashFunction(int);
+
+};
 
 
 
-private:
+
+
+
+
+
 
 
 // BUILDING THE SYMPTOMS/CONDITION LIBRARY
