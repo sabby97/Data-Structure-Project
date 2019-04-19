@@ -10,7 +10,7 @@ using namespace std
 
 /*
 
-  Constructor set's ChashTable size to ChashTableSize and ShashTable size to ShashTableSize
+  Constructor set's ChashTable size to ChashTableSize and ShashTable size to
 
 */
 
@@ -179,8 +179,8 @@ int Conditions::ShashFunction(string word){
   used when the patient already knows their condition and we add them to the queue
 */
 condition* Conditions::searchCondition(string name){
-  int index = ShashFunction(name);
-  if( ShashTable[index] == 0){
+  int index = ChashFunction(name);
+  if( ChashTable[index] == 0){
     cout<<"Your condition does not exist in our database, please go to the menu to diagnose you condition"<<endl;
     return 0;
   }
@@ -200,12 +200,115 @@ condition* Conditions::searchCondition(string name){
 }
 
 void Condition::menu(){
-  while(){
-    cout<<"1. If this is an medical emergency please e"
+  string a1;
+  int a;
+  cout<<"1. If this is an medical emergency please enter 1"<<endl;
+  cout<<"2. If you would like to make a appointment please enter 2"<<endl;
+  getline(cin, a1));
+  a = stoi(a1);
+
+  if(a == 1){
+    cout<<"We are contacting emergency service. We will get you help as soon as possible"<<endl;
+    return;
+  }
+  else{
+    createPatient();
+    menu1();
+    cin.ignore();
+    getline(cin, a1);
+    a=stoi(a1);
+    if (a==1){
+      cout<<"Enter your medical condition: "<<endl;
+      string a2;
+      cin.ignore();
+      getline(cin, a2);
+      patient->condition=searchCondition(a2);
+    }
+    if (a == 2){
+      string done;
+      int temp;
+      set<symptom*> p;
+      cout<<"Select from the following symptoms: "<<endl;
+      while( done != "done"){
+        printSymptoms();
+        cout<<"Please enter the name condition and If you are done selecting your symptoms please type: done"<<endl;
+        getline(cin, done);
+        if (done != "done"){
+          symptom* temp1 = searchSymptom(done);
+          p.insert(temp1);
+        }
+      }
+      patient->symptoms = p;
+    }
+    else{
+      return;
+    }
   }
 }
 
-void Condition::createPatient(string name, int pain)
-{
-  delete 
+void Condition::menu1(){
+  cout<<"Choose from one of the following options: "<<endl;
+  cout<<"1. If you are know your medical condition "<<endl;
+  cout<<"2. Help diagnose your medical condition "<<endl;
+  cout<<"3. Exit the program "<<endl;
+}
+
+void Condition::menu2(){}
+
+/*Aks for imput, creates new patient, points patient to new patient and deletes old patient*/
+void Condition::createPatient(){
+  patient* temp=this->patient;
+  string name;
+  string painstr;
+  int pain;
+  cout<<"Please enter your name: ";
+  cin.ignore();
+  getline(cin, name);
+  cout<<"Please enter your current pain level ranging from 1-20 :";
+  getline(cin, painstr);
+  pain=stoi(painstr);
+  patient newpatient;
+  newpatient.name=name;
+  newpatient.pain=pain;
+  this->patient=newpatient;
+  delete temp;
+}
+
+/*prints symptoms from hashtable*/
+void Condition::printSymptoms(){
+  int cnt=1;
+  for (int i=0; i<ShashTableSize; i++)
+  {
+    if (ShashTable[i]!=0)
+    {
+      condition* temp=ShashTable[i];
+      while(temp!=0)
+      {
+        cout<<cnt<<"."<<temp->name<<endl;
+        temp=temp->next;
+        cnt++;
+      }
+    }
+  }
+}
+
+symptom* Conditions::searchSymptom(string name){
+  int index =ShashFunction(name);
+  if( ShashTable[index] == 0){
+    cout<<"Sorry, you mistyped the symptom."<<endl;
+    return 0;
+  }
+  else{
+    condition *trav = ShashTable[index];
+    while(trav->next != 0){
+      if(trav->name != name){
+        trav = trav->next;
+      }
+      else{
+        return trav;
+      }
+    }
+    cout<<"Sorry, you mistyped the symptom."<<endl;
+    return 0;
+  }
 }

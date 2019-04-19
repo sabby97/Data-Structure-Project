@@ -25,6 +25,7 @@ struct patient{
   set<string> symptoms;
   condition* condition;
   int pain;
+  int totalP; // total priority, priority of the disease plus the pain level
 };
 
 
@@ -38,6 +39,9 @@ private:
 
 public:
   void menu();
+  void menu1();
+  void menu2();
+
   condition** ChashTable;
   int ChashTableSize;
   void readFile(string file);
@@ -45,13 +49,15 @@ public:
 
 
   symptom** ShashTable;
-  int ShashtableSize;
+  int ShashTableSize;
   void Sadd(symptom* sympt);
+  void assignOrder();
   condition* searchCondition(string name);
+  void printSymptoms();
+  symptom* searchSymptom(string name);
 
-  patient* patient;
-  void createPatient(string name, int pain);
-
+  patient* patient=0;
+  void createPatient();
 
 
 };
