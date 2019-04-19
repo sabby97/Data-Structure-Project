@@ -20,24 +20,39 @@ struct condition{
 
 };
 
+struct patient{
+  string name;
+  set<string> symptoms;
+  condition* condition;
+  int pain;
+};
+
 
 class Conditions {// AKA diseases
 private:
   Conditions();
   ~Conditions();
-  unsigned int getHash(string word);
+  int ChashFunction(string word);
+  int ShashFunction(string word);
 
 
 public:
+  void menu();
   condition** ChashTable;
   int ChashTableSize;
-  void CreadFile(string file);
-  void Cadd(condition* cond);
-  int hashFunction(int);
+  void readFile(string file);
+  void Cadd(string name, int priority, set<symptom> symptoms);
+
 
   symptom** ShashTable;
   int ShashtableSize;
-  
+  void Sadd(symptom* sympt);
+  condition* searchCondition(string name);
+
+  patient* patient;
+  void createPatient(string name, int pain);
+
+
 
 };
 
