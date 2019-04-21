@@ -352,9 +352,10 @@ void Conditions::analyzeMatchedConditions(priority_queue<condition> Q){
   vector<condition*> C;
   if(Q.top->percentage==1){
     while(Q.top->percentage==1){
-      condition* temp=Q.top;
-      Q.pop//unfinished
-
+      condition* temp=Q.top();
+      Q.pop();
+      C.push(temp);//unfinished
     }
+    if 
   }
 }
