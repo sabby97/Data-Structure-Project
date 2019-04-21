@@ -336,12 +336,12 @@ priority_queue<condition> Conditions::getBestMatchConditions(){
 
   set<condition> allconditions;
   set<condition>::iterator i;
-  for(i=patient->symptoms.begin(); i!=patient->symptoms.end(); ++i){
+  for(i=patient->symptoms.begin(); i!=patient->symptoms.end(); i++){
     allconditions=getUnion(allconditions, (*i)->conditions)
   }
   priority_queue<condition> matchedlist;
   set<condition>::iterator j;
-  for(j=allconditions.begin(); j!=allconditions.end(); ++j){
+  for(j=allconditions.begin(); j!=allconditions.end(); j++){
     (*j)->percentage=getPercentage(getIntersection(*i, patient->symptoms));
     matchedlist.push(*j);
   }
@@ -356,6 +356,6 @@ void Conditions::analyzeMatchedConditions(priority_queue<condition> Q){
       Q.pop();
       C.push(temp);//unfinished
     }
-    if 
+    if
   }
 }
