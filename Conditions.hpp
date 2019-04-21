@@ -18,8 +18,11 @@ struct condition{
   float percentage;
   set <symptom*> symptoms;
   condition* next = 0;
-  condition* after = 0;
 };
+//operator overload
+bool <operator(const condition& c1, condition& c2){
+  return c1.percentage<c2.percentage;
+}
 
 struct patient{
   string name;
@@ -28,6 +31,7 @@ struct patient{
   int pain;
   int totalP; // total priority, priority of the disease plus the pain level
 };
+
 
 
 class Conditions {// AKA diseases
@@ -59,10 +63,10 @@ public:
 
   patient* patient=0;
   void createPatient();
-  set<symptom> getIntersection(set<symptom> set1, set<symptom> set2);
-  set<condition> getUnion(set<condition> set1, set<condition> set2);
+  set<symptom*> getIntersection(set<symptom*> set1, set<symptom*> set2);
+  set<condition*> getUnion(set<condition*> set1, set<condition*> set2);
   float getPercentage(set<symptom> intersect);
-  set<condition> getBestMatchConditions();
+  priority_queue<condition> getBestMatchConditions();
 
 
 };

@@ -315,58 +315,46 @@ symptom* Conditions::searchSymptom(string name){
 }
 
 /*gets intersection of two symptom sets and returns intersection as a set*/
-set<symptom> getIntersection(set<symptom> set1, set<symptom> set2){
+set<symptom> Conditions::getIntersection(set<symptom> set1, set<symptom> set2){
   set<symptom> intersect;
   set_intersection(set1.begin(), set1.end(), set2.begin(), set2.end(), inserter(intersect, intersect.begin()));
   return intersect;
 }
 /*gets union of two condition sets and returns union as a set*/
-set<condition> getUnion(set<condition> set1, set<condition> set2){
+set<condition> Conditions::getUnion(set<condition> set1, set<condition> set2){
   set<symptom> union;
   set_intersection(set1.begin(), set1.end(), set2.begin(), set2.end(), inserter(union, union.begin()));
   return union;
 }
 /*returns size of intersect divided by patient set (matching percentage)*/
-float getPercentage(set<symptom> intersect){
+float Conditions::getPercentage(set<symptom> intersect){
   float percent=intersect.size()/patient->symptoms.size();
   return percent;
 }
-
-vector<condition> getBestMatchConditions(){
+/*puts conditions in priority queue based on matching percentage, returns priority queue*/
+priority_queue<condition> Conditions::getBestMatchConditions(){
 
   set<condition> allconditions;
   set<condition>::iterator i;
   for(i=patient->symptoms.begin(); i!=patient->symptoms.end(); ++i){
     allconditions=getUnion(allconditions, (*i)->conditions)
   }
-  condition* matchedlist=0;
+  priority_queue<condition> matchedlist;
   set<condition>::iterator j;
   for(j=allconditions.begin(); j!=allconditions.end(); ++j){
     (*j)->percentage=getPercentage(getIntersection(*i, patient->symptoms));
-    if ((*j)->percentage>=0.3){
-      if (matchedlist==0){
-        matchedlist=(*j);
-      }
-      else if ((*j)->percentage>matchedlist->percentage){
-        (*j)->after=matchedlist;
-        matchedlist=(*j);
-      }
-      else {
-        condition* trav=matchedlist;
-        bool added=false;
-        while(trav->after!=0){
-          if ((*j)->percentage>trav->after->percentage){
-            (*j)->after=trav->after;
-            trav->after=(*j);
-            added=true;
-          }
-          trav=trav->after;
-        }
-        if (added==false){
-          trav->after=(*j);
-        }
-      }
-    }
+    matchedlist.push(*j);
   }
   return matchedlist;
+}
+/**/
+void Conditions::analyzeMatchedConditions(priority_queue<condition> Q){
+  vector<condition*> C;
+  if(Q.top->percentage==1){
+    while(Q.top->percentage==1){
+      condition* temp=Q.top;
+      Q.pop//unfinished
+
+    }
+  }
 }
