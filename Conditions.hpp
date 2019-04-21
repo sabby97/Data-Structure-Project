@@ -15,9 +15,10 @@ struct symptom{
 struct condition{
   string name;
   int priority;
+  float percentage;
   set <symptom*> symptoms;
-  symptom* next = 0;
-
+  condition* next = 0;
+  condition* after = 0;
 };
 
 struct patient{
@@ -58,6 +59,10 @@ public:
 
   patient* patient=0;
   void createPatient();
+  set<symptom> getIntersection(set<symptom> set1, set<symptom> set2);
+  set<condition> getUnion(set<condition> set1, set<condition> set2);
+  float getPercentage(set<symptom> intersect);
+  set<condition> getBestMatchConditions();
 
 
 };

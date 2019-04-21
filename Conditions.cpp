@@ -6,7 +6,8 @@
 #include <set>
 #include <vector>
 #include <queue>
-using namespace std
+#include <algorithm>
+using namespace std;
 
 /*
 
@@ -94,7 +95,7 @@ void Conditions::readFile(string file){
       }
     condition* conditionpointer=Cadd(name, priority, symptoms);//add condition to ChashTable
     set<symptom*>::iterator i=symptoms.begin();
-    while(it!=symptoms.end())//iterate through set of symptoms
+    while(i!=symptoms.end())//iterate through set of symptoms
     {
       *i->conditions.insert(conditionpointer);//at each symptom insert condition pointer into set of condition pointers
       Sadd(*i);//add symptom to ShashTable
@@ -311,4 +312,61 @@ symptom* Conditions::searchSymptom(string name){
     cout<<"Sorry, you mistyped the symptom."<<endl;
     return 0;
   }
+}
+
+/*gets intersection of two symptom sets and returns intersection as a set*/
+set<symptom> getIntersection(set<symptom> set1, set<symptom> set2){
+  set<symptom> intersect;
+  set_intersection(set1.begin(), set1.end(), set2.begin(), set2.end(), inserter(intersect, intersect.begin()));
+  return intersect;
+}
+/*gets union of two condition sets and returns union as a set*/
+set<condition> getUnion(set<condition> set1, set<condition> set2){
+  set<symptom> union;
+  set_intersection(set1.begin(), set1.end(), set2.begin(), set2.end(), inserter(union, union.begin()));
+  return union;
+}
+/*returns size of intersect divided by patient set (matching percentage)*/
+float getPercentage(set<symptom> intersect){
+  float percent=intersect.size()/patient->symptoms.size();
+  return percent;
+}
+
+vector<condition> getBestMatchConditions(){
+
+  set<condition> allconditions;
+  set<condition>::iterator i;
+  for(i=patient->symptoms.begin(); i!=patient->symptoms.end(); ++i){
+    allconditions=getUnion(allconditions, (*i)->conditions)
+  }
+  condition* matchedlist=0;
+  set<condition>::iterator j;
+  for(j=allconditions.begin(); j!=allconditions.end(); ++j){
+    (*j)->percentage=getPercentage(getIntersection(*i, patient->symptoms));
+    if ((*j)->percentage>=0.3){
+      if (matchedlist==0){
+        matchedlist=(*j);
+      }
+      else if ((*j)->percentage>matchedlist->percentage){
+        (*j)->after=matchedlist;
+        matchedlist=(*j);
+      }
+      else {
+        condition* trav=matchedlist;
+        bool added=false;
+        while(trav->after!=0){
+          if ((*j)->percentage>trav->after->percentage){
+            (*j)->after=trav->after;
+            trav->after=(*j);
+            added=true;
+          }
+          trav=trav->after;
+        }
+        if (added==false){
+          trav->after=(*j);
+        }
+      }
+    }
+  }
+  return matchedlist;
 }
