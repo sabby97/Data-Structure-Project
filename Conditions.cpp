@@ -315,40 +315,41 @@ symptom* Conditions::searchSymptom(string name){
 }
 
 /*gets intersection of two symptom sets and returns intersection as a set*/
-set<symptom> Conditions::getIntersection(set<symptom> set1, set<symptom> set2){
-  set<symptom> intersect;
+set<symptom*> Conditions::getIntersection(set<symptom*> set1, set<symptom*> set2){
+  set<symptom*> intersect;
   set_intersection(set1.begin(), set1.end(), set2.begin(), set2.end(), inserter(intersect, intersect.begin()));
   return intersect;
 }
 /*gets union of two condition sets and returns union as a set*/
-set<condition> Conditions::getUnion(set<condition> set1, set<condition> set2){
-  set<symptom> union;
+set<condition*> Conditions::getUnion(set<condition*> set1, set<condition*> set2){
+  set<condition*> union;
   set_intersection(set1.begin(), set1.end(), set2.begin(), set2.end(), inserter(union, union.begin()));
   return union;
 }
 /*returns size of intersect divided by patient set (matching percentage)*/
-float Conditions::getPercentage(set<symptom> intersect){
+float Conditions::getPercentage(set<symptom*> intersect){
   float percent=intersect.size()/patient->symptoms.size();
   return percent;
 }
 /*puts conditions in priority queue based on matching percentage, returns priority queue*/
-priority_queue<condition> Conditions::getBestMatchConditions(){
+priority_queue<condition*> Conditions::getBestMatchConditions(){
 
-  set<condition> allconditions;
-  set<condition>::iterator i;
+  set<condition*> allconditions;
+  set<condition*>::iterator i;
   for(i=patient->symptoms.begin(); i!=patient->symptoms.end(); ++i){
     allconditions=getUnion(allconditions, (*i)->conditions)
   }
-  priority_queue<condition> matchedlist;
-  set<condition>::iterator j;
+  priority_queue<condition*> matchedlist;
+  set<condition*>::iterator j;
   for(j=allconditions.begin(); j!=allconditions.end(); ++j){
     (*j)->percentage=getPercentage(getIntersection(*i, patient->symptoms));
     matchedlist.push(*j);
   }
   return matchedlist;
 }
-/**/
-void Conditions::analyzeMatchedConditions(priority_queue<condition> Q){
+/*if there is one perfect match, saves that as patient's condition; if multiple perfect matches or close matches,
+patient gets to choose their condition or describe to doctor. If no close matches, patient describes their condition.*/
+void Conditions::analyzeMatchedConditions(priority_queue<condition*> Q){
   vector<condition*> C;
   if(Q.top->percentage==1){
     while(Q.top->percentage==1){
@@ -356,6 +357,118 @@ void Conditions::analyzeMatchedConditions(priority_queue<condition> Q){
       Q.pop();
       C.push(temp);//unfinished
     }
-    if 
+    if(C.size==1){
+      cout<<"We have found one perfect match condition: "<<C.front()->name<<endl;
+      patient->condition=c.front();
+      return;
+    }
+    else{
+      cout<<"Here are the perfect matches with their lists of symptoms. Enter the number of the one you identify with the most "<<endl;
+      cout<<"If you don't identify with any of the matched conditions, type 'none' to open a window to describe your symptoms and allow our doctors to judge your condition."<<endl;
+      //print symptoms (choices)
+      for (int i=0; i<C.size(); i++){
+        cout<<i+1<<")["<<C[i]->name<<"] -- symptoms:";
+        set<symptom*>::iterator j;
+        for(j=C[i]->symptoms.begin(); j!=C[i]->symptoms.end(); ++j){
+          cout<<"||"<<(*j)->name;
+        }
+        cout<<endl;
+      }
+      //patient's choice
+      int choice;
+      string temp;
+      cin.ignore(0);
+      getline(cin, temp);
+      choice=stoi(temp);
+      if (choice==0){
+        //call description
+        writeDescription();
+      }
+      else if(choice>0 && choice<=C.size()){
+        patient->condition=C[choice-1];
+      }
+      return;
+    }
+  }
+  else if (Q.top->percentage>=0.3){
+    while(Q.top->percentage>=1){
+      condition* temp=Q.top();
+      Q.pop();
+      C.push(temp);//unfinished
+    }
+    cout<<"These are close matches to your symptoms. Enter the number of the one you identify with the most."<<endl;
+    cout<<"If you don't identify with any of these conditions, enter 0 to open a window to describe your symptoms to the doctor."<<endl;
+    for (int i=0; i<C.size(); i++){
+      cout<<i+1<<")["<<C[i]->name<<"] -- matching percentage:"<<C[i]->percentage<<" ; symptoms:";
+      set<symptom*>::iterator j;
+      for(j=C[i]->symptoms.begin(); j!=C[i]->symptoms.end(); ++j){
+        cout<<"||"<<(*j)->name;
+      }
+      cout<<endl;
+    }
+    //patient's choice
+    int choice;
+    string temp;
+    cin.ignore(0);
+    getline(cin, temp);
+    choice=stoi(temp);
+    if (choice==0){
+      //call description
+      writeDescription();
+    }
+    else if(choice>0 && choice<=C.size()){
+      patient->condition=C[choice-1];
+    }
+    return;
+
+  }
+  else{
+    cout<<"Sorry we didn't not find a match for your symptoms in our database."
+    //call description function
+    writeDescription();
+    return;
   }
 }
+/*patient describes symptoms, send to doctor*/
+void Conditions::writeDescription(){
+  cout<<"Please describe your symptoms as precisely as possible: "<<endl;
+  string description;
+  cin.ignore(0);
+  getline(cin, description);
+  ofstream file;
+  file.open("patientdescription.txt");
+  if(file.is_open()){
+    file<<patient->name<<":"<<description<<endl;
+  }
+  file.close();//FIGURE OUT HOW TO NOT OVERWRITE EACH TIME.
+  cout<<"Your description has been sent to the doctor for further analysis."<<endl;
+}
+/*resets percentage of all conditions to 0 for next patient*/
+void Conditions::resetPercentage(){
+  for(int i=0; i<ChashTableSize; i++)
+  {
+    if (ChashTable[i]!=0)
+    {
+      condition* temp=ChashTable[i];
+      while(temp!=0)
+      {
+        temp->percentage=0;
+        temp=temp->next;
+      }
+    }
+  }
+}
+/**/
+void Condition::treatPatient(){
+  patient* temp;
+  temp=queue.top();
+  queue.pop();
+  cout<<"Now treating patient "<<temp->name<<endl;
+  updateQueue();
+  cout<<"Next patient (predicted): "<<queue.top()->name<<endl;
+}
+void Condition::addPatienttoqueue(){
+  
+}
+void Condition::updateQueue();//NOT IMPLEMENTED
+void Condition::printOrder();//NOT IMPLEMENTED

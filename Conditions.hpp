@@ -60,16 +60,17 @@ public:
   condition* searchCondition(string name);
   void printSymptoms();
   symptom* searchSymptom(string name);
-  void resetPercentage();//NOT IMPLEMENTED
+  void resetPercentage();
 
   patient* patient=0;
   void createPatient();
   set<symptom*> getIntersection(set<symptom*> set1, set<symptom*> set2);
   set<condition*> getUnion(set<condition*> set1, set<condition*> set2);
-  float getPercentage(set<symptom> intersect);
-  priority_queue<condition> getBestMatchConditions();
+  float getPercentage(set<symptom*> intersect);
+  priority_queue<condition*> getBestMatchConditions();
+  void writeDescription();
 
-  priority_queue<patient> queue;
+  priority_queue<patient*> queue;
   void treatPatient();//NOT IMPLEMENTED
   void addPatienttoqueue();//NOT IMPLEMENTED
   void updateQueue();//NOT IMPLEMENTED
