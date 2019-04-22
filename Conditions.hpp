@@ -32,7 +32,9 @@ struct patient{
   int totalP; // total priority, priority of the disease plus the pain level
 };
 
-
+bool <operator(const patient& p1, patient& p2){
+  return p1.totalP<p2.totalP;
+}
 
 class Conditions {// AKA diseases
 private:

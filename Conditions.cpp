@@ -334,25 +334,14 @@ float Conditions::getPercentage(set<symptom*> intersect){
 /*puts conditions in priority queue based on matching percentage, returns priority queue*/
 priority_queue<condition*> Conditions::getBestMatchConditions(){
 
-<<<<<<< HEAD
-  set<condition*> allconditions;
-  set<condition*>::iterator i;
-  for(i=patient->symptoms.begin(); i!=patient->symptoms.end(); ++i){
-    allconditions=getUnion(allconditions, (*i)->conditions)
-  }
-  priority_queue<condition*> matchedlist;
-  set<condition*>::iterator j;
-  for(j=allconditions.begin(); j!=allconditions.end(); ++j){
-=======
   set<condition> allconditions;
   set<condition>::iterator i;
-  for(i=patient->symptoms.begin(); i!=patient->symptoms.end(); i++){
+  for(i=patient->symptoms.begin(); i!=patient->symptoms.end(); ++i){
     allconditions=getUnion(allconditions, (*i)->conditions)
   }
   priority_queue<condition> matchedlist;
   set<condition>::iterator j;
-  for(j=allconditions.begin(); j!=allconditions.end(); j++){
->>>>>>> ee93cb52926465981a77a23d0a03216d3ed17428
+  for(j=allconditions.begin(); j!=allconditions.end(); ++j){
     (*j)->percentage=getPercentage(getIntersection(*i, patient->symptoms));
     matchedlist.push(*j);
   }
@@ -368,7 +357,6 @@ void Conditions::analyzeMatchedConditions(priority_queue<condition*> Q){
       Q.pop();
       C.push(temp);//unfinished
     }
-<<<<<<< HEAD
     if(C.size==1){
       cout<<"We have found one perfect match condition: "<<C.front()->name<<endl;
       patient->condition=c.front();
@@ -439,9 +427,6 @@ void Conditions::analyzeMatchedConditions(priority_queue<condition*> Q){
     //call description function
     writeDescription();
     return;
-=======
-    if
->>>>>>> ee93cb52926465981a77a23d0a03216d3ed17428
   }
 }
 /*patient describes symptoms, send to doctor*/
@@ -473,7 +458,7 @@ void Conditions::resetPercentage(){
     }
   }
 }
-/**/
+/*pops patient from queue and updates queue*/
 void Condition::treatPatient(){
   patient* temp;
   temp=queue.top();
@@ -482,8 +467,31 @@ void Condition::treatPatient(){
   updateQueue();
   cout<<"Next patient (predicted): "<<queue.top()->name<<endl;
 }
+
 void Condition::addPatienttoqueue(){
-  
+  patient->totalP=patient->condition->priority + patient->pain;
+  queue.push();
 }
-void Condition::updateQueue();//NOT IMPLEMENTED
-void Condition::printOrder();//NOT IMPLEMENTED
+/*adds 10 to the priority to all patients already in queue*/
+void Condition::updateQueue(){
+  priority_queue<patient*> newqueue;
+  for(int i=0; i<queue.size(); i++){
+    patient* temp=queue.top();
+    queue.pop();
+    temp->totalP+=10;
+    newqueue.push(temp);//pushes updated patient into new queue
+  }
+  queue=newqueue;
+}
+/*pops each patient from queue, prints patient, puts back in new queue*/
+void Condition::printOrder(){
+  cout<<"Order of patients:"<<endl;
+  priority_queue<patient*> newqueue;
+  for(int i=0; i<queue.size(); i++){
+    patient* temp=queue.top();
+    queue.pop();
+    cout<<temp->name<<endl;
+    newqueue.push(temp);//pushes updated patient into new queue
+  }
+  queue=newqueue;
+}
