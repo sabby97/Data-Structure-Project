@@ -334,6 +334,7 @@ float Conditions::getPercentage(set<symptom*> intersect){
 /*puts conditions in priority queue based on matching percentage, returns priority queue*/
 priority_queue<condition*> Conditions::getBestMatchConditions(){
 
+<<<<<<< HEAD
   set<condition*> allconditions;
   set<condition*>::iterator i;
   for(i=patient->symptoms.begin(); i!=patient->symptoms.end(); ++i){
@@ -342,6 +343,16 @@ priority_queue<condition*> Conditions::getBestMatchConditions(){
   priority_queue<condition*> matchedlist;
   set<condition*>::iterator j;
   for(j=allconditions.begin(); j!=allconditions.end(); ++j){
+=======
+  set<condition> allconditions;
+  set<condition>::iterator i;
+  for(i=patient->symptoms.begin(); i!=patient->symptoms.end(); i++){
+    allconditions=getUnion(allconditions, (*i)->conditions)
+  }
+  priority_queue<condition> matchedlist;
+  set<condition>::iterator j;
+  for(j=allconditions.begin(); j!=allconditions.end(); j++){
+>>>>>>> ee93cb52926465981a77a23d0a03216d3ed17428
     (*j)->percentage=getPercentage(getIntersection(*i, patient->symptoms));
     matchedlist.push(*j);
   }
@@ -357,6 +368,7 @@ void Conditions::analyzeMatchedConditions(priority_queue<condition*> Q){
       Q.pop();
       C.push(temp);//unfinished
     }
+<<<<<<< HEAD
     if(C.size==1){
       cout<<"We have found one perfect match condition: "<<C.front()->name<<endl;
       patient->condition=c.front();
@@ -427,6 +439,9 @@ void Conditions::analyzeMatchedConditions(priority_queue<condition*> Q){
     //call description function
     writeDescription();
     return;
+=======
+    if
+>>>>>>> ee93cb52926465981a77a23d0a03216d3ed17428
   }
 }
 /*patient describes symptoms, send to doctor*/
