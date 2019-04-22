@@ -338,7 +338,7 @@ priority_queue<condition*> Conditions::getBestMatchConditions(){
   set<condition*> allconditions;
   set<condition*>::iterator i;
   for(i=patient->symptoms.begin(); i!=patient->symptoms.end(); ++i){
-    allconditions=getUnion(allconditions, (*i)->conditions)
+    allconditions=getUnion(allconditions, (*i)->conditions);
   }
   priority_queue<condition*> matchedlist;
   set<condition*>::iterator j;
@@ -347,7 +347,7 @@ priority_queue<condition*> Conditions::getBestMatchConditions(){
   set<condition> allconditions;
   set<condition>::iterator i;
   for(i=patient->symptoms.begin(); i!=patient->symptoms.end(); i++){
-    allconditions=getUnion(allconditions, (*i)->conditions)
+    allconditions=getUnion(allconditions, (*i)->conditions);
   }
   priority_queue<condition> matchedlist;
   set<condition>::iterator j;
@@ -483,7 +483,7 @@ void Condition::treatPatient(){
   cout<<"Next patient (predicted): "<<queue.top()->name<<endl;
 }
 void Condition::addPatienttoqueue(){
-  
+
 }
 void Condition::updateQueue();//NOT IMPLEMENTED
 void Condition::printOrder();//NOT IMPLEMENTED
