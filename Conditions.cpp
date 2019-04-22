@@ -233,6 +233,7 @@ void Condition::menu(){
       while( done != "done"){
         printSymptoms();
         cout<<"Please enter the name condition and If you are done selecting your symptoms please type: done"<<endl;
+        cin.ignore(0);
         getline(cin, done);
         if (done != "done"){
           symptom* temp1 = searchSymptom(done);
@@ -240,11 +241,13 @@ void Condition::menu(){
         }
       }
       patient->symptoms = p;
+      analyzeMatchedConditions(getBestMatchConditions());
     }
     else{
       return;
     }
   }
+  return 0;
 }
 
 void Condition::menu1(){
@@ -254,7 +257,8 @@ void Condition::menu1(){
   cout<<"3. Exit the program "<<endl;
 }
 
-void Condition::menu2(){}
+void Condition::menu2(){
+}
 
 /*Aks for imput, creates new patient, points patient to new patient and deletes old patient*/
 void Condition::createPatient(){
@@ -467,7 +471,7 @@ void Condition::treatPatient(){
   updateQueue();
   cout<<"Next patient (predicted): "<<queue.top()->name<<endl;
 }
-
+/*calculates total priority of patient, then pushes patient into queue*/
 void Condition::addPatienttoqueue(){
   patient->totalP=patient->condition->priority + patient->pain;
   queue.push();

@@ -6,6 +6,12 @@
 #include <queue>
 using namespace std;
 
+struct time{
+  int 
+  int hour;
+  int min;
+};
+
 struct symptom{
     string name;
     set<condition*> conditions;
@@ -73,10 +79,10 @@ public:
   void writeDescription();
 
   priority_queue<patient*> queue;
-  void treatPatient();//NOT IMPLEMENTED
-  void addPatienttoqueue();//NOT IMPLEMENTED
-  void updateQueue();//NOT IMPLEMENTED
-  void printOrder();//NOT IMPLEMENTED
+  void treatPatient();
+  void addPatienttoqueue();
+  void updateQueue();
+  void printOrder();
 
 
 };
