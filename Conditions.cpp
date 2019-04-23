@@ -335,7 +335,7 @@ symptom* Conditions::searchSymptom(string name){
         trav = trav->next;
       }
       else{
-        cout<<"Found "<<trav->next<<endl;
+        cout<<"Found "<<trav->name<<endl;
         return trav;
       }
     }
