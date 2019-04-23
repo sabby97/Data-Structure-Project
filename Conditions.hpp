@@ -67,6 +67,7 @@ public:
   condition* searchCondition(string name);
   void printSymptoms();
   symptom* searchSymptom(string name);
+  symptom** accessSymptom(string name);
   void resetPercentage();
 
   patient* thepatient=0;
@@ -85,6 +86,7 @@ public:
   void printOrder();
   void printConditions();
 
+  void system();
 
 
 };
