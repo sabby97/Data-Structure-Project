@@ -252,7 +252,6 @@ void Conditions::menu(){
     if (a==1){
       cout<<"Enter your medical condition: "<<endl;
       string a2;
-      cin.ignore();
       getline(cin, a2);
       thepatient->condition=searchCondition(a2);
       if (thepatient->condition==0){
