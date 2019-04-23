@@ -6,6 +6,7 @@
 #include <queue>
 using namespace std;
 //g++ driver.cpp Conditions.cpp -o run
+
 struct condition;
 
 struct symptom{
