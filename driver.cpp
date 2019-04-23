@@ -12,6 +12,7 @@ using namespace std;
 int main(){
   Conditions C(10, 10);
   C.readFile("conditions.txt");
+  C.printConditions();
   C.menu();
   //cout<<"TEST SEARCH FUNCTION"<<endl;
   //C.searchSymptom("nausea");
@@ -27,4 +28,5 @@ int main(){
   for (i=test.begin(); i!=test.end(); ++i){
     cout<<*i<<endl;
   }*/
+  return 0;
 }
