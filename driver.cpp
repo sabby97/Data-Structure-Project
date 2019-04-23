@@ -12,6 +12,7 @@ using namespace std;
 int main(){
   Conditions C(10, 10);
   C.readFile("conditions.txt");
+  C.menu();
   //cout<<"TEST SEARCH FUNCTION"<<endl;
   //C.searchSymptom("nausea");
   //C.searchCondition("lung cancer");
