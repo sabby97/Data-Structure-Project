@@ -278,7 +278,6 @@ void Conditions::menu(){
       set<symptom*> s;
       //s=p;
       thepatient->symptoms = p;
-      cout<<"Before analyzing"<<endl;
       analyzeMatchedConditions(getBestMatchConditions());
     }
     else{
@@ -361,22 +360,26 @@ symptom* Conditions::searchSymptom(string name){
 set<symptom*> Conditions::getIntersection(set<symptom*> set1, set<symptom*> set2){
   set<symptom*> intersect;
   set_intersection(set1.begin(), set1.end(), set2.begin(), set2.end(), inserter(intersect, intersect.begin()));
+  cout<<"in getIntersection"<<endl;
   return intersect;
 }
 /*gets union of two condition sets and returns union as a set*/
 set<condition*> Conditions::getUnion(set<condition*> set1, set<condition*> set2){
   set<condition*> union_;
   set_intersection(set1.begin(), set1.end(), set2.begin(), set2.end(), inserter(union_, union_.begin()));
+  cout<<"in getUnion"<<endl;
   return union_;
 }
 /*returns size of intersect divided by patient set (matching percentage)*/
 float Conditions::getPercentage(set<symptom*> intersect){
   float percent=intersect.size()/thepatient->symptoms.size();
+  cout<<"in getPercentage"<<endl;
+  cout<<"percent"<<endl;
   return percent;
 }
 /*puts conditions in priority queue based on matching percentage, returns priority queue*/
 priority_queue<condition*> Conditions::getBestMatchConditions(){
-
+  cout<<"in getBestMatchConditions"<<endl;
   set<condition*> allconditions;
   set<symptom*>::iterator i;
   for(i=thepatient->symptoms.begin(); i!=thepatient->symptoms.end(); ++i){
