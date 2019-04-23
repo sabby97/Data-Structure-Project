@@ -84,7 +84,7 @@ void Conditions::readFile(string filename){
     string prior;
     int priority;
     getline(s1, name, ',');//stringstream gets name of condition
-    cout<<"condition: "<<name<<endl;
+    //cout<<"condition: "<<name<<endl;
     getline(s1,prior,',');//gets priority
     priority=stoi(prior);
 
@@ -98,7 +98,7 @@ void Conditions::readFile(string filename){
       if (sympt=="") break;
       symptom* temp= new symptom;//create a symptom
       temp->name=sympt;
-      cout<<"reading a symptom"<<temp->name<<endl;
+      //cout<<"reading a symptom"<<temp->name<<endl;
       //cout<<"Readfile: parse symptom "<<temp->name<<endl;
       //n++;
       //test.insert(n);
@@ -115,8 +115,10 @@ void Conditions::readFile(string filename){
       for(i=symptoms.begin(); i!=symptoms.end(); ++i)//iterate through set of symptoms
       {
         //cout<<"inserting condition pointer"<<endl;
-        cout<<"adding condition to: "<<(*i)->name<<endl;
-        (*i)->conditions.insert(conditionpointer);//at each symptom insert condition pointer into set of condition pointers
+        //cout<<"adding condition to: "<<(*i)->name<<endl;
+        symptom** dpointer=accessSymptom((*i)->name);
+        (*dpointer)->conditions.insert(conditionpointer);
+        //(*i)->conditions.insert(conditionpointer);//at each symptom insert condition pointer into set of condition pointers
       }
   }
   //cout<<"Done"<<endl;
@@ -265,7 +267,7 @@ void Conditions::menu(){
         }
       }
       //cout<<"Out of while loop"<<endl;
-      set<symptom*> s;
+      //set<symptom*> s;
       //s=p;
       thepatient->symptoms = p;
       analyzeMatchedConditions(getBestMatchConditions());
@@ -324,9 +326,10 @@ void Conditions::printSymptoms(){
       {
         set<condition*>::iterator g;
         cout<<cnt<<"."<<temp->name<<endl;
-        for (g=temp->conditions.begin(); g!=temp->conditions.end(); ++g){
+      /*  for (g=temp->conditions.begin(); g!=temp->conditions.end(); ++g){
           cout<<"%%"<<(*g)->name<<endl;
         }
+        */
 
         temp=temp->next;
         cnt++;
@@ -346,9 +349,10 @@ void Conditions::printConditions(){
       {
         set<symptom*>::iterator a;
         cout<<cnt<<"."<<temp->name<<endl;
-        for (a=temp->symptoms.begin(); a!=temp->symptoms.end(); ++a){
+        /*for (a=temp->symptoms.begin(); a!=temp->symptoms.end(); ++a){
           cout<<"%%"<<(*a)->name<<endl;
         }
+        */
 
         temp=temp->next;
         cnt++;
@@ -442,38 +446,52 @@ priority_queue<condition*> Conditions::getBestMatchConditions(){
     //cout<<"After percentage"<<endl;
     //getPercentage(temp);
     matchedlist.push(*j);
-    cout<<"size of matchedlist "<<matchedlist.size()<<endl;
+    //cout<<"size of matchedlist "<<matchedlist.size()<<endl;
   }
   return matchedlist;
 }
 /*if there is one perfect match, saves that as patient's condition; if multiple perfect matches or close matches,
 patient gets to choose their condition or describe to doctor. If no close matches, patient describes their condition.*/
 void Conditions::analyzeMatchedConditions(priority_queue<condition*> Q){
+  cout<<"Entered analyzeMatchedConditions"<<endl;
   vector<condition*> C;
+  ////cout<<"error1"<<endl;
   if(Q.top()->percentage==1){
+    ////cout<<"error2"<<endl;
     while(Q.top()->percentage==1){
+      ////cout<<"error3"<<endl;
       condition* temp=Q.top();
+      ////cout<<"error4"<<endl;
       Q.pop();
+      ////cout<<"error5"<<endl;
       C.push_back(temp);//unfinished
+      ////cout<<"error6"<<endl;
     }
     if(C.size()==1){
+      ////cout<<"error7"<<endl;
       cout<<"We have found one perfect match condition: "<<C.front()->name<<endl;
+      ////cout<<"error8"<<endl;
       thepatient->condition=C.front();
+      ////cout<<"error9"<<endl;
       return;
     }
     else{
       cout<<"Here are the perfect matches with their lists of symptoms. Enter the number of the one you identify with the most "<<endl;
       cout<<"If you don't identify with any of the matched conditions, type 'none' to open a window to describe your symptoms and allow our doctors to judge your condition."<<endl;
       //print symptoms (choices)
+      ////cout<<"error10"<<endl;
       for (int i=0; i<C.size(); i++){
         cout<<i+1<<")["<<C[i]->name<<"] -- symptoms:";
         set<symptom*>::iterator j;
         for(j=C[i]->symptoms.begin(); j!=C[i]->symptoms.end(); ++j){
           cout<<"||"<<(*j)->name;
+          ////cout<<"error11"<<endl;
         }
         cout<<endl;
+        ////cout<<"error12"<<endl;
       }
       //patient's choice
+      ////cout<<"error13"<<endl;
       int choice;
       string temp;
       cin.ignore(0);
@@ -481,27 +499,40 @@ void Conditions::analyzeMatchedConditions(priority_queue<condition*> Q){
       choice=stoi(temp);
       if (choice==0){
         //call description
+        //cout<<"error14"<<endl;
         writeDescription();
       }
       else if(choice>0 && choice<=C.size()){
         thepatient->condition=C[choice-1];
+        //cout<<"error15"<<endl;
       }
       return;
     }
   }
   else if (Q.top()->percentage>=0.3){
+    //cout<<"error16"<<endl;
     while(Q.top()->percentage>=1){
+      //cout<<"error17"<<endl;
       condition* temp=Q.top();
+      //cout<<"error18"<<endl;
       Q.pop();
+      //cout<<"error19"<<endl;
       C.push_back(temp);//unfinished
+      //cout<<"error20"<<endl;
     }
     cout<<"These are close matches to your symptoms. Enter the number of the one you identify with the most."<<endl;
     cout<<"If you don't identify with any of these conditions, enter 0 to open a window to describe your symptoms to the doctor."<<endl;
+    //cout<<"error21"<<endl;
     for (int i=0; i<C.size(); i++){
+      //cout<<"error22"<<endl;
       cout<<i+1<<")["<<C[i]->name<<"] -- matching percentage:"<<C[i]->percentage<<" ; symptoms:";
+      //cout<<"error23"<<endl;
       set<symptom*>::iterator j;
+      //cout<<"error24"<<endl;
       for(j=C[i]->symptoms.begin(); j!=C[i]->symptoms.end(); ++j){
+        //cout<<"error25"<<endl;
         cout<<"||"<<(*j)->name;
+        //cout<<"error26"<<endl;
       }
       cout<<endl;
     }
@@ -513,17 +544,21 @@ void Conditions::analyzeMatchedConditions(priority_queue<condition*> Q){
     choice=stoi(temp);
     if (choice==0){
       //call description
+      //cout<<"error27"<<endl;
       writeDescription();
     }
     else if(choice>0 && choice<=C.size()){
       thepatient->condition=C[choice-1];
+      //cout<<"error29"<<endl;
     }
     return;
 
   }
   else{
+    //cout<<"error30"<<endl;
     cout<<"Sorry we didn't not find a match for your symptoms in our database.";
     //call description function
+    //cout<<"error31"<<endl;
     writeDescription();
     return;
   }
@@ -637,8 +672,8 @@ symptom** Conditions::accessSymptom(string name){
   }
   symptom **trav = &ShashTable[index];
   while(trav != 0){
-    if(trav->name == name) return trav;
-    trav = &(trav->next);
+    if((*trav)->name == name) return trav;
+    trav = &((*trav)->next);
   }
   //cout<<"Sorry, the symptom to you have typed does not exist in our database or it has not been spelled properly"<<endl;
   return 0;
