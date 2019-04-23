@@ -5,12 +5,8 @@
 #include <vector>
 #include <queue>
 using namespace std;
-
-struct time{
-  int 
-  int hour;
-  int min;
-};
+//g++ driver.cpp Conditions.cpp -o run
+struct condition;
 
 struct symptom{
     string name;
@@ -24,33 +20,36 @@ struct condition{
   float percentage;
   set <symptom*> symptoms;
   condition* next = 0;
+  bool operator < (const condition& c2){
+    return (percentage<c2.percentage);
+  }
 };
 //operator overload
-bool <operator(const condition& c1, condition& c2){
-  return c1.percentage<c2.percentage;
-}
+
 
 struct patient{
   string name;
-  set<string> symptoms;
+  set<symptom*> symptoms;
   condition* condition;
   int pain;
   int totalP; // total priority, priority of the disease plus the pain level
+  bool operator < (const patient& p2){
+    return (totalP<p2.totalP);
+  }
 };
 
-bool <operator(const patient& p1, patient& p2){
-  return p1.totalP<p2.totalP;
-}
+
 
 class Conditions {// AKA diseases
 private:
-  Conditions();
-  ~Conditions();
-  int ChashFunction(string word);
-  int ShashFunction(string word);
+  int ChashFunction(string word);//WORKS
+  int ShashFunction(string word);//WORKS
 
 
 public:
+  Conditions(int ChashTableSize, int ShashTableSize);
+  ~Conditions();
+
   void menu();
   void menu1();
   void menu2();
@@ -58,25 +57,26 @@ public:
   condition** ChashTable;
   int ChashTableSize;
   void readFile(string file);
-  void Cadd(string name, int priority, set<symptom> symptoms);
+  condition* Cadd(string name, int priority, set<symptom*> symptoms);//WORKS
 
 
   symptom** ShashTable;
   int ShashTableSize;
-  void Sadd(symptom* sympt);
+  void Sadd(symptom* sympt);//WORKS
   void assignOrder();
   condition* searchCondition(string name);
   void printSymptoms();
   symptom* searchSymptom(string name);
   void resetPercentage();
 
-  patient* patient=0;
+  patient* thepatient=0;
   void createPatient();
   set<symptom*> getIntersection(set<symptom*> set1, set<symptom*> set2);
   set<condition*> getUnion(set<condition*> set1, set<condition*> set2);
   float getPercentage(set<symptom*> intersect);
+  void analyzeMatchedConditions(priority_queue<condition*> Q);
   priority_queue<condition*> getBestMatchConditions();
-  void writeDescription();
+  void writeDescription();//WORKS
 
   priority_queue<patient*> queue;
   void treatPatient();
@@ -86,15 +86,6 @@ public:
 
 
 };
-
-
-
-
-
-
-
-
-
 
 // BUILDING THE SYMPTOMS/CONDITION LIBRARY
 ///////
