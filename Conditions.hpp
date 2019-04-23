@@ -17,7 +17,7 @@ struct symptom{
 struct condition{
   string name;
   int priority;
-  float percentage;
+  float percentage=0;
   set <symptom*> symptoms;
   condition* next = 0;
   bool operator < (const condition& c2){
