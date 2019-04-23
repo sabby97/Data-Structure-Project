@@ -12,9 +12,10 @@ using namespace std;
 int main(){
   Conditions C(10, 10);
   C.readFile("conditions.txt");
-  cout<<"TEST SEARCH FUNCTION"<<endl;
-  C.searchSymptom("nausea");
-  C.searchCondition("lung cancer");
+  C.menu();
+  //cout<<"TEST SEARCH FUNCTION"<<endl;
+  //C.searchSymptom("nausea");
+  //C.searchCondition("lung cancer");
   //C.printSymptoms();
 //C.writeDescription();
   /*

@@ -104,6 +104,8 @@ void Conditions::readFile(string filename){
       cout<<"Adding symptom number "<<n<<endl;
       symptoms.insert(pointer);//push pointer into set of symptoms
       cout<<"first in set: "<<(*symptoms.begin())->name<<"; size of set is "<<symptoms.size()<<endl;
+      if (searchSymptom((pointer)->name)==0){
+              Sadd(pointer);//add symptom to ShashTable
       }
     condition* conditionpointer=Cadd(name, priority, symptoms);//add condition to ChashTable
     //cout<<"iterator"<<endl;
@@ -115,8 +117,8 @@ void Conditions::readFile(string filename){
       //cout<<"inserting condition pointer"<<endl;
       cout<<"adding symptom "<<(*i)->name<<endl;
       (*i)->conditions.insert(conditionpointer);//at each symptom insert condition pointer into set of condition pointers
-      if (searchSymptom((*i)->name)==0){
-              Sadd(*i);//add symptom to ShashTable
+      //if (searchSymptom((*i)->name)==0){
+              //Sadd(*i);//add symptom to ShashTable
       }
     }
   }
@@ -157,6 +159,7 @@ condition* Conditions::Cadd(string name, int priority, set<symptom*> symptoms ){
 void Conditions::Sadd(symptom* temp1){
   int index = ShashFunction(temp1->name);
   cout<<"Sadd is adding "<<temp1->name<<endl;
+  if(searchSymptom(temp1->name)!=0) return;
   if(ShashTable[index] == 0){
     ShashTable[index] = temp1;
     cout<<"added "<<ShashTable[index]->name<<endl;
@@ -239,9 +242,10 @@ void Conditions::menu(){
     return;
   }
   else{
+    cout<<"Before createPatient"<<endl;
     createPatient();
     menu1();
-    cin.ignore();
+    cin.ignore(0);
     getline(cin, a1);
     a=stoi(a1);
     if (a==1){
@@ -250,6 +254,10 @@ void Conditions::menu(){
       cin.ignore();
       getline(cin, a2);
       thepatient->condition=searchCondition(a2);
+      if (thepatient->condition==0){
+        cout<<"Please try entering your symptoms."<<endl;
+        a=2;
+      }
     }
     if (a == 2){
       string done;
@@ -266,7 +274,11 @@ void Conditions::menu(){
           p.insert(temp1);
         }
       }
+      cout<<"Out of while loop"<<endl;
+      set<symptom*> s;
+      //s=p;
       thepatient->symptoms = p;
+      cout<<"Before analyzing"<<endl;
       analyzeMatchedConditions(getBestMatchConditions());
     }
     else{
@@ -287,7 +299,8 @@ void Conditions::menu2(){
 
 /*Aks for imput, creates new patient, points patient to new patient and deletes old patient*/
 void Conditions::createPatient(){
-  patient* temp=this->thepatient;
+  cout<<"Entered createPatient function"<<endl;
+  patient* temp=thepatient;
   string name;
   string painstr;
   int pain;
@@ -297,10 +310,10 @@ void Conditions::createPatient(){
   cout<<"Please enter your current pain level ranging from 1-20 :";
   getline(cin, painstr);
   pain=stoi(painstr);
-  patient newpatient;
-  newpatient.name=name;
-  newpatient.pain=pain;
-  this->thepatient=&newpatient;
+  patient* newpatient=new patient;
+  newpatient->name=name;
+  newpatient->pain=pain;
+  thepatient=newpatient;
   delete temp;
 }
 
