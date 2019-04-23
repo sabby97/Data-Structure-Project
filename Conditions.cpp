@@ -70,10 +70,10 @@ void Conditions::readFile(string filename){
   ifstream file;
   file.open(filename);
   if (! file.is_open()){
-    cout<<"File didn't open"<<endl;
+    cout<<"File failed to open"<<endl;
     return;
   }
-  cout<<"File opened"<<endl;
+  //cout<<"File opened"<<endl;
   string line;
   while(getline(file, line))//gets each line in file
   {
@@ -86,39 +86,38 @@ void Conditions::readFile(string filename){
     getline(s1, name, ',');//stringstream gets name of condition
     getline(s1,prior,',');//gets priority
     priority=stoi(prior);
+
     string sympt;
     set<symptom*> symptoms;
     set<int> test;
     int n=0;
     symptom* pointer=0;
+    condition* conditionpointer;
     while(getline(s1, sympt,','))//gets each symptom
     {
       if (sympt=="") break;
       symptom* temp= new symptom;//create a symptom
       temp->name=sympt;
       //cout<<"reading a symptom"<<temp.name<<endl;
-      pointer=temp;//create a pointer to symptom
-      cout<<"insert into S-table "<<pointer->name<<endl;
+      //cout<<"Readfile: parse symptom "<<temp->name<<endl;
       n++;
       //test.insert(n);
-      cout<<"Adding symptom number "<<n<<endl;
-      symptoms.insert(pointer);//push pointer into set of symptoms
-      cout<<"first in set: "<<(*symptoms.begin())->name<<"; size of set is "<<symptoms.size()<<endl;
-      if (searchSymptom((pointer)->name)==0){
-              Sadd(pointer);//add symptom to ShashTable
-      }
-    condition* conditionpointer=Cadd(name, priority, symptoms);//add condition to ChashTable
-    //cout<<"iterator"<<endl;
-    set<symptom*>::iterator i;
-    //cout<<"before while loop"<<endl;
-    cout<<"size of symptoms is "<<symptoms.size()<<endl;
-    for(i=symptoms.begin(); i!=symptoms.end(); ++i)//iterate through set of symptoms
-    {
-      //cout<<"inserting condition pointer"<<endl;
-      cout<<"adding symptom "<<(*i)->name<<endl;
-      (*i)->conditions.insert(conditionpointer);//at each symptom insert condition pointer into set of condition pointers
-      //if (searchSymptom((*i)->name)==0){
-              //Sadd(*i);//add symptom to ShashTable
+      //cout<<"Adding symptom number: "<<n<<endl;
+      symptoms.insert(temp);//push pointer into set of symptoms
+      //cout<<"first in set: "<<(*symptoms.begin())->name<<"; size of set is "<<symptoms.size()<<endl;
+      Sadd(temp);//add symptom to ShashTable
+      conditionpointer = Cadd(name, priority, symptoms);//add condition to ChashTable
+      //cout<<"iterator"<<endl;
+      set<symptom*>::iterator i;
+      //cout<<"before while loop"<<endl;
+      //cout<<"size of symptoms is "<<symptoms.size()<<endl;
+      for(i=symptoms.begin(); i!=symptoms.end(); ++i)//iterate through set of symptoms
+      {
+        //cout<<"inserting condition pointer"<<endl;
+        //cout<<"adding condition to: "<<(*i)->name<<endl;
+        (*i)->conditions.insert(conditionpointer);//at each symptom insert condition pointer into set of condition pointers
+        //if (searchSymptom((*i)->name)==0){
+                //Sadd(*i);//add symptom to ShashTable
       }
     }
   }
@@ -132,12 +131,12 @@ void Conditions::readFile(string filename){
 condition* Conditions::Cadd(string name, int priority, set<symptom*> symptoms ){
   //cout<<"Entered Cadd"<<endl;
   int index = ChashFunction(name);
-  //cout<<"hashed"<<endl;
-  condition* temp= new condition;
+  //cout<<"hashed"<<endl
+  if (searchCondition(name) != 0) return 0;
+  condition* temp = new condition;
   temp->name = name;
   temp->priority = priority;
   temp->symptoms = symptoms;
-  if(searchCondition(temp->name) != 0) return 0;
   if(ChashTable[index] == 0){
     ChashTable[index] = temp;
     //cout<<"added "<<ChashTable[index]->name<<endl;
@@ -159,11 +158,11 @@ condition* Conditions::Cadd(string name, int priority, set<symptom*> symptoms ){
 
 void Conditions::Sadd(symptom* temp1){
   int index = ShashFunction(temp1->name);
-  cout<<"Sadd is adding "<<temp1->name<<endl;
   if(searchSymptom(temp1->name)!=0) return;
+  //cout<<"Sadd is adding (Sadd) "<<temp1->name<<endl;
   if(ShashTable[index] == 0){
     ShashTable[index] = temp1;
-    cout<<"added "<<ShashTable[index]->name<<endl;
+    //cout<<"added (Sadd)"<<ShashTable[index]->name<<endl;
   }
   else{
     symptom* trav = ShashTable[index];
@@ -171,7 +170,7 @@ void Conditions::Sadd(symptom* temp1){
       trav = trav->next;
     }
     trav->next = temp1;
-    cout<<"added "<<trav->next->name<<endl;
+    //cout<<"added (Sadd)"<<trav->next->name<<endl;
   }
 }
 
@@ -210,25 +209,18 @@ int Conditions::ShashFunction(string word){
 */
 condition* Conditions::searchCondition(string name){
   int index = ChashFunction(name);
-  if( ChashTable[index] == 0){
-    cout<<"Your condition does not exist in our database, please go to the menu to diagnose you condition"<<endl;
+  if( ChashTableSize == 0){
     return 0;
   }
-  else{
-    condition *trav = ChashTable[index];
-    while(trav->next != 0){
-      if(trav->name != name){
-        trav = trav->next;
-      }
-      else{
-        cout<<"We found "<<trav->name<<endl;
-        return trav;
-      }
-    }
-    cout<<"Your condition does not exist in our database, please go to the menu to diagnose you condition"<<endl;
-    return 0;
+  condition *trav = ChashTable[index];
+  while(trav != 0){
+    if(trav->name == name) return trav;
+      trav = trav->next;
   }
+  cout<<"Your condition does not exist in our database, please return to the menu to diagnose you condition"<<endl;
+  return 0;
 }
+
 
 void Conditions::menu(){
   string a1;
@@ -239,35 +231,34 @@ void Conditions::menu(){
   a = stoi(a1);
 
   if(a == 1){
-    cout<<"We are contacting emergency service. We will get you help as soon as possible"<<endl;
+    cout<<"We are contacting emergency services. We will get help as soon as possible"<<endl;
     return;
   }
   else{
-    cout<<"Before createPatient"<<endl;
+    //cout<<"Before createPatient"<<endl;
     createPatient();
     menu1();
     cin.ignore(0);
     getline(cin, a1);
     a=stoi(a1);
     if (a==1){
-      cout<<"Enter your medical condition: "<<endl;
+      cout<<"Please enter your medical condition: "<<endl;
       string a2;
-      cin.ignore();
       getline(cin, a2);
-      thepatient->condition=searchCondition(a2);
-      if (thepatient->condition==0){
-        cout<<"Please try entering your symptoms."<<endl;
+      thepatient->condition = searchCondition(a2);
+      //cout<<"after searchCondition"<<endl;
+      if (thepatient->condition == 0){
         a=2;
       }
     }
-    if (a == 2){
+    else if (a == 2){
       string done;
       int temp;
       set<symptom*> p;
       cout<<"Select from the following symptoms: "<<endl;
       while( done != "done"){
         printSymptoms();
-        cout<<"Please enter the name condition and If you are done selecting your symptoms please type: done"<<endl;
+        cout<<"Please enter the name of your symptoms and if you are done selecting your symptoms type: done"<<endl;
         cin.ignore(0);
         getline(cin, done);
         if (done != "done"){
@@ -275,7 +266,7 @@ void Conditions::menu(){
           p.insert(temp1);
         }
       }
-      cout<<"Out of while loop"<<endl;
+      //cout<<"Out of while loop"<<endl;
       set<symptom*> s;
       //s=p;
       thepatient->symptoms = p;
@@ -285,11 +276,13 @@ void Conditions::menu(){
       return;
     }
   }
+  addPatienttoqueue();
+  printOrder();
 }
 
 void Conditions::menu1(){
-  cout<<"Choose from one of the following options: "<<endl;
-  cout<<"1. If you are know your medical condition "<<endl;
+  cout<<"Choose from one of the following options below: "<<endl;
+  cout<<"1. If you already know your medical condition "<<endl;
   cout<<"2. Help diagnose your medical condition "<<endl;
   cout<<"3. Exit the program "<<endl;
 }
@@ -299,13 +292,13 @@ void Conditions::menu2(){
 
 /*Aks for imput, creates new patient, points patient to new patient and deletes old patient*/
 void Conditions::createPatient(){
-  cout<<"Entered createPatient function"<<endl;
+  //cout<<"Entered createPatient function"<<endl;
   patient* temp=thepatient;
   string name;
   string painstr;
   int pain;
   cout<<"Please enter your name: ";
-  cin.ignore();
+  cin.ignore(0);
   getline(cin, name);
   cout<<"Please enter your current pain level ranging from 1-20 :";
   getline(cin, painstr);
@@ -327,6 +320,10 @@ void Conditions::printSymptoms(){
       symptom* temp=ShashTable[i];
       while(temp!=0)
       {
+        set<condition*>::iterator g;
+        for (g=temp->conditions.begin(); g!=temp->conditions.end(); ++g){
+          cout<<"%%"<<(*g)->name<<endl;
+        }
         cout<<cnt<<"."<<temp->name<<endl;
         temp=temp->next;
         cnt++;
@@ -344,6 +341,10 @@ void Conditions::printConditions(){
       condition* temp=ChashTable[i];
       while(temp!=0)
       {
+        set<symptom*>::iterator a;
+        for (a=temp->symptoms.begin(); a!=temp->symptoms.end(); ++a){
+          cout<<"%%"<<(*a)->name<<endl;
+        }
         cout<<cnt<<"."<<temp->name<<endl;
         temp=temp->next;
         cnt++;
@@ -354,42 +355,57 @@ void Conditions::printConditions(){
 
 symptom* Conditions::searchSymptom(string name){
   int index = ShashFunction(name);
-  if( ShashTable[index] == 0){
-    cout<<"Sorry, you mistyped the symptom."<<endl;
+  if( ShashTableSize == 0){
     return 0;
   }
-  else{
-    symptom *trav = ShashTable[index];
-    while(trav->next != 0){
-      if(trav->name != name){
-        trav = trav->next;
-      }
-      else{
-        cout<<"Found "<<trav->name<<endl;
-        return trav;
-      }
-    }
-    cout<<"Sorry, you mistyped the symptom."<<endl;
-    return 0;
+  symptom *trav = ShashTable[index];
+  while(trav != 0){
+    if(trav->name == name) return trav;
+    trav = trav->next;
   }
+  cout<<"Sorry, the symptom to you have typed does not exist in our database or it has not been spelled properly"<<endl;
+  return 0;
 }
 
 /*gets intersection of two symptom sets and returns intersection as a set*/
 set<symptom*> Conditions::getIntersection(set<symptom*> set1, set<symptom*> set2){
   set<symptom*> intersect;
-  set_intersection(set1.begin(), set1.end(), set2.begin(), set2.end(), inserter(intersect, intersect.begin()));
   cout<<"in getIntersection"<<endl;
+  set<symptom*>::iterator i;
+  set<symptom*>::iterator j;
+  for (i=set1.begin(); i!=set1.end(); ++i){
+    for (j=set2.begin(); j!=set2.end(); ++j){
+      if (*i==*j){
+        intersect.insert(*j);
+      }
+    }
+  }
+  //set_intersection(set1.begin(), set1.end(), set2.begin(), set2.end(), inserter(intersect, intersect.begin()));
+  //cout<<"in getIntersection"<<endl;
+  cout<<"intersect size is "<<intersect.size()<<endl;
   return intersect;
 }
 /*gets union of two condition sets and returns union as a set*/
 set<condition*> Conditions::getUnion(set<condition*> set1, set<condition*> set2){
   set<condition*> union_;
-  set_intersection(set1.begin(), set1.end(), set2.begin(), set2.end(), inserter(union_, union_.begin()));
-  cout<<"in getUnion"<<endl;
+  set<condition*>::iterator i;
+  set<condition*>::iterator j;
+  cout<<"set1 size "<<set1.size();
+  cout<<"set2 size "<<set2.size();
+  for (i=set1.begin(); i!=set1.end(); ++i){
+    union_.insert(*i);
+  }
+  for (j=set2.begin(); j!=set2.end(); ++j){
+    union_.insert(*j);
+  }
+  //set_intersection(set1.begin(), set1.end(), set2.begin(), set2.end(), inserter(union_, union_.begin()));
+  //cout<<"in getUnion"<<endl;
+  cout<<"union_ size is "<<union_.size();
   return union_;
 }
 /*returns size of intersect divided by patient set (matching percentage)*/
 float Conditions::getPercentage(set<symptom*> intersect){
+  cout<<"in getPercentage 1 "<<endl;
   float percent=intersect.size()/thepatient->symptoms.size();
   cout<<"in getPercentage"<<endl;
   cout<<"percent"<<endl;
@@ -397,17 +413,32 @@ float Conditions::getPercentage(set<symptom*> intersect){
 }
 /*puts conditions in priority queue based on matching percentage, returns priority queue*/
 priority_queue<condition*> Conditions::getBestMatchConditions(){
-  cout<<"in getBestMatchConditions"<<endl;
+  //cout<<"in getBestMatchConditions"<<endl;
   set<condition*> allconditions;
   set<symptom*>::iterator i;
   for(i=thepatient->symptoms.begin(); i!=thepatient->symptoms.end(); ++i){
+    cout<<"conditions size is "<<(*i)->conditions.size()<<endl;;
+    cout<<(*i)->name<<endl;;
     allconditions=getUnion(allconditions, (*i)->conditions);
+    //cout<<"allconditions size is "<<allconditions.size()<<endl;
+    //cout<<"Out of getUnion"<<endl;
   }
+  //cout<<"before matchedlist"<<endl;
   priority_queue<condition*> matchedlist;
+  //cout<<"after matched list"<<endl;
   set<condition*>::iterator j;
+  //cout<<"after iterator"<<endl;
+  //cout<<"size of all conditions "<<allconditions.size()<<endl;
   for(j=allconditions.begin(); j!=allconditions.end(); ++j){
-    (*j)->percentage=getPercentage(getIntersection((*j)->symptoms, thepatient->symptoms));
+    cout<<"In for loop"<<endl;
+    //(*j)->percentage=getPercentage((*j)->symptoms);
+    //set<symptom*> temp=getIntersection((*j)->symptoms, thepatient->symptoms);
+    cout<<(*j)->name<<endl;
+    (*j)->percentage=0.8;
+    cout<<"After percentage"<<endl;
+    //getPercentage(temp);
     matchedlist.push(*j);
+    cout<<"size of matchedlist "<<matchedlist.size()<<endl;
   }
   return matchedlist;
 }
@@ -536,9 +567,11 @@ void Conditions::treatPatient(){
 }
 /*calculates total priority of patient, then pushes patient into queue*/
 void Conditions::addPatienttoqueue(){
+  cout<<"Entered addPatienttoqueue"<<endl;
   thepatient->totalP=thepatient->condition->priority + thepatient->pain;
   patient add=*thepatient;
   queue.push(&add);
+  cout<<"queue size is "<<queue.size()<<endl;
 }
 /*adds 10 to the priority to all patients already in queue*/
 void Conditions::updateQueue(){
@@ -554,9 +587,12 @@ void Conditions::updateQueue(){
 /*pops each patient from queue, prints patient, puts back in new queue*/
 void Conditions::printOrder(){
   cout<<"Order of patients:"<<endl;
+      //cout<<queue.top()->name<<endl;
   priority_queue<patient*> newqueue;
   for(int i=0; i<queue.size(); i++){
+    cout<<"Inside for loop"<<endl;
     patient* temp=queue.top();
+    //cout<<queue.top()->name<<endl;
     queue.pop();
     cout<<temp->name<<endl;
     newqueue.push(temp);//pushes updated patient into new queue
