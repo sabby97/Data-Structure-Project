@@ -133,10 +133,11 @@ condition* Conditions::Cadd(string name, int priority, set<symptom*> symptoms ){
   //cout<<"Entered Cadd"<<endl;
   int index = ChashFunction(name);
   //cout<<"hashed"<<endl;
-  condition* temp=new condition;
+  condition* temp= new condition;
   temp->name = name;
   temp->priority = priority;
   temp->symptoms = symptoms;
+  if(searchCondition(temp->name) != 0) return 0;
   if(ChashTable[index] == 0){
     ChashTable[index] = temp;
     //cout<<"added "<<ChashTable[index]->name<<endl;
@@ -334,8 +335,25 @@ void Conditions::printSymptoms(){
   }
 }
 
+void Conditions::printConditions(){
+  int cnt=1;
+  for (int i=0; i<ChashTableSize; i++)
+  {
+    if (ChashTable[i]!=0)
+    {
+      condition* temp=ChashTable[i];
+      while(temp!=0)
+      {
+        cout<<cnt<<"."<<temp->name<<endl;
+        temp=temp->next;
+        cnt++;
+      }
+    }
+  }
+}
+
 symptom* Conditions::searchSymptom(string name){
-  int index =ShashFunction(name);
+  int index = ShashFunction(name);
   if( ShashTable[index] == 0){
     cout<<"Sorry, you mistyped the symptom."<<endl;
     return 0;
@@ -347,7 +365,7 @@ symptom* Conditions::searchSymptom(string name){
         trav = trav->next;
       }
       else{
-        cout<<"Found "<<trav->next<<endl;
+        cout<<"Found "<<trav->name<<endl;
         return trav;
       }
     }

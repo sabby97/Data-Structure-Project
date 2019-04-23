@@ -83,6 +83,8 @@ public:
   void addPatienttoqueue();
   void updateQueue();
   void printOrder();
+  void printConditions();
+
 
 
 };
