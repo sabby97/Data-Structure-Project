@@ -12,6 +12,8 @@ using namespace std;
 int main(){
   Conditions C(10, 10);
   C.readFile("conditions.txt");
+  //C.system();
+
   C.printConditions();
   C.printSymptoms();
   //C.menu();
