@@ -89,7 +89,7 @@ void Conditions::readFile(string filename){
     priority=stoi(prior);
 
     string sympt;
-    set<symptom*> symptoms;
+    set<symptom*>  symptoms;
     set<int> test;
     symptom* pointer=0;
     condition* conditionpointer;
