@@ -40,6 +40,7 @@ struct patient{
 
 
 
+
 class Conditions {// AKA diseases
 private:
   int ChashFunction(string word);//WORKS
