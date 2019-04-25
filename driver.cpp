@@ -13,7 +13,8 @@ int main(){
   Conditions C(10, 10);
   C.readFile("conditions.txt");
   C.system();
-
+  //priority_queue<patient*> queue;
+  //patient a;
   //C.printConditions();
   //C.printSymptoms();
   //C.menu();

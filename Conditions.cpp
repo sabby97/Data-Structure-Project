@@ -272,19 +272,22 @@ void Conditions::menu(){
       thepatient->symptoms = p;
       analyzeMatchedConditions(getBestMatchConditions());
     }
+    else if (a == 3){
+      printOrder();
+    }
     else{
       return;
     }
   }
   addPatienttoqueue();
-  printOrder();
 }
 
 void Conditions::menu1(){
   cout<<"Choose from the following options below: "<<endl;
   cout<<"1. I already know medical condition "<<endl;
   cout<<"2. I need help to diagnose my medical condition "<<endl;
-  cout<<"3. I'd like to cancel my appointment "<<endl;
+  cout<<"3. Print the Queue "<<endl;
+  cout<<"4. Exit "<<endl;
 }
 
 void Conditions::menu2(){
@@ -614,7 +617,7 @@ void Conditions::addPatienttoqueue(){
 }
 /*adds 10 to the priority to all patients already in queue*/
 void Conditions::updateQueue(){
-  priority_queue<patient*> newqueue;
+  priority_queue<patient*> newqueue=queue;
   for(int i=0; i<queue.size(); i++){
     patient* temp=queue.top();
     queue.pop();
@@ -625,25 +628,19 @@ void Conditions::updateQueue(){
 }
 /*pops each patient from queue, prints patient, puts back in new queue*/
 void Conditions::printOrder(){
-  cout<<"Order of patients:"<<endl;
-      //cout<<queue.top()->name<<endl;
-  priority_queue<patient*> newqueue;
-  for(int i=0; i<queue.size(); i++){
-    //cout<<"Inside for loop"<<endl;
-    patient* temp=queue.top();
-    //cout<<queue.top()->name<<endl;
-    queue.pop();
-    cout<<temp->name<<endl;
-    newqueue.push(temp);//pushes updated patient into new queue
+  priority_queue<patient*> newqueue = queue;
+  while(!newqueue.empty()){
+    patient* temp = newqueue.top();
+    cout<<"."<<temp->name<<endl;
+    newqueue.pop();
   }
-  queue=newqueue;
 }
 
 void Conditions::system(){
   string temp;
   int c=0;
-  while(c!=3){
-    cout<<"Enter 1 for patient interface, 2 for doctor interface, 3 to exit."<<endl;
+  while(c!=4){
+    cout<<"Enter 1 for patient interface, 2 for doctor interface, 3 to check the queue, 4 to exit"<<endl;
     cout<<"-----------------------------------------------------------------"<<endl;
     getline(cin, temp);
     c=stoi(temp);
@@ -659,6 +656,9 @@ void Conditions::system(){
     }
     }
     else if (c==3){
+      printOrder();
+    }
+    else if (c==4){
       return;
     }
     cout<<"-----------------------------------------------------------------"<<endl<<endl;;
