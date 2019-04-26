@@ -302,7 +302,6 @@ void Conditions::createPatient(){
   string name;
   string painstr;
   int pain=0;
-
   cout<<"Please enter your legal name: ";
   getline(cin, name);
   while(pain<=0 || pain>20){
@@ -423,7 +422,7 @@ float Conditions::getPercentage(set<symptom*> intersect){
   return percent;
 }
 /*puts conditions in priority queue based on matching percentage, returns priority queue*/
-priority_queue<condition*> Conditions::getBestMatchConditions(){
+priority_queue<condition*, std::vector<condition*>, Compare1> Conditions::getBestMatchConditions(){
   //cout<<"in getBestMatchConditions"<<endl;
   set<condition*> allconditions;
   set<symptom*>::iterator i;
@@ -435,7 +434,7 @@ priority_queue<condition*> Conditions::getBestMatchConditions(){
     //cout<<"Out of getUnion"<<endl;
   }
   //cout<<"before matchedlist"<<endl;
-  priority_queue<condition*> matchedlist;
+  priority_queue<condition*, vector<condition*>, Compare1 > matchedlist;
   //cout<<"after matched list"<<endl;
   set<condition*>::iterator j;
   //cout<<"after iterator"<<endl;
@@ -455,7 +454,7 @@ priority_queue<condition*> Conditions::getBestMatchConditions(){
 }
 /*if there is one perfect match, saves that as patient's condition; if multiple perfect matches or close matches,
 patient gets to choose their condition or describe to doctor. If no close matches, patient describes their condition.*/
-void Conditions::analyzeMatchedConditions(priority_queue<condition*> Q){
+void Conditions::analyzeMatchedConditions(priority_queue<condition*, std::vector<condition*>, Compare1> Q){
   cout<<"Entered analyzeMatchedConditions"<<endl;
   vector<condition*> C;
   ////cout<<"error1"<<endl;
@@ -617,7 +616,7 @@ void Conditions::addPatienttoqueue(){
 }
 /*adds 10 to the priority to all patients already in queue*/
 void Conditions::updateQueue(){
-  priority_queue<patient*> newqueue=queue;
+  priority_queue<patient*, vector<patient*>, Compare2> newqueue = queue;
   for(int i=0; i<queue.size(); i++){
     patient* temp=queue.top();
     queue.pop();
@@ -628,10 +627,9 @@ void Conditions::updateQueue(){
 }
 /*pops each patient from queue, prints patient, puts back in new queue*/
 void Conditions::printOrder(){
-  priority_queue<patient*> newqueue = queue;
+  priority_queue<patient*, vector<patient*>, Compare2> newqueue = queue;
   while(!newqueue.empty()){
-    patient* temp = newqueue.top();
-    cout<<"."<<temp->name<<endl;
+    cout<<'.'<<newqueue.top()->name<<endl;
     newqueue.pop();
   }
 }
