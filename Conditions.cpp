@@ -313,7 +313,9 @@ void Conditions::createPatient(){
   newpatient->name=name;
   newpatient->pain=pain;
   thepatient=newpatient;
-  delete temp;
+  //delete temp;
+  cout<<thepatient->name<<endl;
+  cout<<thepatient->pain<<endl;
 }
 
 /*prints symptoms from hashtable*/
@@ -608,10 +610,11 @@ void Conditions::treatPatient(){
 }
 /*calculates total priority of patient, then pushes patient into queue*/
 void Conditions::addPatienttoqueue(){
-  cout<<"Entered "<<thepatient->name<<" to queue."<<endl;
   thepatient->totalP=thepatient->condition->priority + thepatient->pain;
-  patient add=*thepatient;
+  patient add= *thepatient;
   queue.push(&add);
+  cout<<"Entered "<<queue.top()->name<<" to queue."<<endl;
+
   //cout<<"queue size is "<<queue.size()<<endl;
 }
 /*adds 10 to the priority to all patients already in queue*/
@@ -627,10 +630,10 @@ void Conditions::updateQueue(){
 }
 /*pops each patient from queue, prints patient, puts back in new queue*/
 void Conditions::printOrder(){
-  priority_queue<patient*, vector<patient*>, Compare2> newqueue = queue;
-  while(!newqueue.empty()){
-    cout<<'.'<<newqueue.top()->name<<endl;
-    newqueue.pop();
+  //priority_queue<patient*, vector<patient*>, Compare2> newqueue = queue;
+  while(!queue.empty()){
+    cout<<'.'<<queue.top()->name<<endl;
+    queue.pop();
   }
 }
 
