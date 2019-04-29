@@ -20,9 +20,9 @@ struct condition{
   float percentage=0;
   set <symptom*> symptoms;
   condition* next = 0;
-  bool operator < (const condition& c2){
-    return (percentage<c2.percentage);
-  }
+  //bool operator < (const condition& c2){
+    //return (percentage<c2.percentage);
+  //}
 };
 //operator overload
 
@@ -33,9 +33,9 @@ struct patient{
   condition* condition;
   int pain;
   int totalP; // total priority, priority of the disease plus the pain level
-  bool operator < (const patient& p2){
-    return (totalP<p2.totalP);
-  }
+  //bool operator < (const patient& p2){
+  //  return (totalP<p2.totalP);
+  //}
 };
 
 
