@@ -271,15 +271,18 @@ void Conditions::menu(){
       //s=p;
       thepatient->symptoms = p;
       analyzeMatchedConditions(getBestMatchConditions());
+      //cout<<"Back to the menu option 2"<<endl;
     }
     else if (a == 3){
       printOrder();
-      cout<<"here"<<endl;
+      //cout<<"here"<<endl;
     }
     else{
+      //cout<<"returns 281"<<endl;
       return;
     }
   }
+  //cout<<"before adding patient"<<endl;
   addPatienttoqueue();
 }
 
@@ -293,7 +296,6 @@ void Conditions::menu1(){
 
 void Conditions::menu2(){
   treatPatient();
-  updateQueue();
 }
 
 /*Aks for imput, creates new patient, points patient to new patient and deletes old patient*/
@@ -330,7 +332,7 @@ void Conditions::printSymptoms(){
       while(temp!=0)
       {
         set<condition*>::iterator g;
-        cout<<cnt<<"."<<temp->name<<endl;
+        cout<<cnt<<".) "<<temp->name<<endl;
       /*  for (g=temp->conditions.begin(); g!=temp->conditions.end(); ++g){
           cout<<"%%"<<(*g)->name<<endl;
         }
@@ -353,7 +355,7 @@ void Conditions::printConditions(){
       while(temp!=0)
       {
         set<symptom*>::iterator a;
-        cout<<cnt<<"."<<temp->name<<endl;
+        cout<<cnt<<".) "<<temp->name<<endl;
         /*for (a=temp->symptoms.begin(); a!=temp->symptoms.end(); ++a){
           cout<<"%%"<<(*a)->name<<endl;
         }
@@ -388,8 +390,9 @@ set<symptom*> Conditions::getIntersection(set<symptom*> set1, set<symptom*> set2
   set<symptom*>::iterator j;
   for (i=set1.begin(); i!=set1.end(); ++i){
     for (j=set2.begin(); j!=set2.end(); ++j){
-      if (*i==*j){
+      if ((*i)->name==(*j)->name){
         intersect.insert(*j);
+        //cout<<"intersection: "<<(*j)->name<<endl;
       }
     }
   }
@@ -419,9 +422,18 @@ set<condition*> Conditions::getUnion(set<condition*> set1, set<condition*> set2)
 /*returns size of intersect divided by patient set (matching percentage)*/
 float Conditions::getPercentage(set<symptom*> intersect){
   //cout<<"in getPercentage 1 "<<endl;
-  float percent=intersect.size()/thepatient->symptoms.size();
+  //cout<<"intersect size "<<intersect.size()<<endl;
+  //cout<<"patient size "<<thepatient->symptoms.size()<<endl;;
+  //cout<<"intersect elements: "<<endl;
+/*  set<symptom*>::iterator i;
+  for(i=intersect.begin(); i!=intersect.end(); ++i){
+    cout<<(*i)->name<<endl;
+
+  }
+  */
+  float percent=(float)intersect.size()/(float)thepatient->symptoms.size();
   //cout<<"in getPercentage"<<endl;
-  //cout<<"percent"<<endl;
+  //cout<<percent<<endl;
   return percent;
 }
 /*puts conditions in priority queue based on matching percentage, returns priority queue*/
@@ -444,8 +456,9 @@ priority_queue<condition*, std::vector<condition*>, Compare1> Conditions::getBes
   //cout<<"size of all conditions "<<allconditions.size()<<endl;
   for(j=allconditions.begin(); j!=allconditions.end(); ++j){
     //cout<<"In for loop"<<endl;
-    (*j)->percentage=getPercentage((*j)->symptoms);
+
     set<symptom*> temp=getIntersection((*j)->symptoms, thepatient->symptoms);
+    (*j)->percentage=getPercentage(temp);
   //  cout<<(*j)->name<<endl;
     //(*j)->percentage=0.8;
     //cout<<"After percentage"<<endl;
@@ -460,46 +473,47 @@ patient gets to choose their condition or describe to doctor. If no close matche
 void Conditions::analyzeMatchedConditions(priority_queue<condition*, std::vector<condition*>, Compare1> Q){
   cout<<"Entered analyzeMatchedConditions"<<endl;
   vector<condition*> C;
-  ////cout<<"error1"<<endl;
-  if(Q.top()->percentage==1){
-    ////cout<<"error2"<<endl;
-    while(Q.top()->percentage==1){
-      ////cout<<"error3"<<endl;
+  //cout<<"error1"<<endl;
+  if(Q.top()->percentage==1.0){
+    //cout<<"error2"<<endl;
+    int cnt=0;
+    while((Q.top()->percentage==1.0) && (cnt<Q.size()) ){
+      //cout<<"error3"<<endl;
       condition* temp=Q.top();
-      ////cout<<"error4"<<endl;
+      //cout<<"error4"<<endl;
       Q.pop();
-      ////cout<<"error5"<<endl;
+      //cout<<"error5"<<endl;
       C.push_back(temp);//unfinished
-      ////cout<<"error6"<<endl;
+      //cout<<"error6"<<endl;
+      cnt++;
     }
     if(C.size()==1){
-      ////cout<<"error7"<<endl;
+      //cout<<"error7"<<endl;
       cout<<"We have found one perfect match condition: "<<C.front()->name<<endl;
-      ////cout<<"error8"<<endl;
+      //cout<<"error8"<<endl;
       thepatient->condition=C.front();
-      ////cout<<"error9"<<endl;
+      //cout<<"error9"<<endl;
       return;
     }
     else{
       cout<<"Here are the perfect matches with their lists of symptoms. Enter the number of the one you identify with the most "<<endl;
-      cout<<"If you don't identify with any of the matched conditions, type 'none' to open a window to describe your symptoms and allow our doctors to judge your condition."<<endl;
+      cout<<"If you don't identify with any of the matched conditions, type 0 to open a window to describe your symptoms and allow our doctors to judge your condition."<<endl;
       //print symptoms (choices)
-      ////cout<<"error10"<<endl;
+      //cout<<"error10"<<endl;
       for (int i=0; i<C.size(); i++){
         cout<<i+1<<")["<<C[i]->name<<"] -- symptoms:";
         set<symptom*>::iterator j;
         for(j=C[i]->symptoms.begin(); j!=C[i]->symptoms.end(); ++j){
           cout<<"||"<<(*j)->name;
-          ////cout<<"error11"<<endl;
+          //cout<<"error11"<<endl;
         }
         cout<<endl;
-        ////cout<<"error12"<<endl;
+        //cout<<"error12"<<endl;
       }
       //patient's choice
       ////cout<<"error13"<<endl;
       int choice;
       string temp;
-      cin.ignore(0);
       getline(cin, temp);
       choice=stoi(temp);
       if (choice==0){
@@ -516,7 +530,8 @@ void Conditions::analyzeMatchedConditions(priority_queue<condition*, std::vector
   }
   else if (Q.top()->percentage>=0.3){
     //cout<<"error16"<<endl;
-    while(Q.top()->percentage>=1){
+    int cnt2=0;
+    while(Q.top()->percentage>=0.3 && cnt2<Q.size() ){
       //cout<<"error17"<<endl;
       condition* temp=Q.top();
       //cout<<"error18"<<endl;
@@ -524,10 +539,12 @@ void Conditions::analyzeMatchedConditions(priority_queue<condition*, std::vector
       //cout<<"error19"<<endl;
       C.push_back(temp);//unfinished
       //cout<<"error20"<<endl;
+      cnt2++;
     }
     cout<<"These are close matches to your symptoms. Enter the number of the one you identify with the most."<<endl;
     cout<<"If you don't identify with any of these conditions, enter 0 to open a window to describe your symptoms to the doctor."<<endl;
     //cout<<"error21"<<endl;
+    cout<<"size of C "<<C.size()<<endl;
     for (int i=0; i<C.size(); i++){
       //cout<<"error22"<<endl;
       cout<<i+1<<")["<<C[i]->name<<"] -- matching percentage:"<<C[i]->percentage<<" ; symptoms:";
@@ -576,7 +593,7 @@ void Conditions::writeDescription(){
   getline(cin, description);
   ofstream file;
   file.open("patientdescription.txt");
-  cout<<"After file.open"<<endl;
+  //cout<<"After file.open"<<endl;
   if(file.is_open()){
     //cout<<"In if statement"<<endl;
     file<<thepatient->name<<":"<<description<<"\n";
@@ -611,8 +628,9 @@ void Conditions::treatPatient(){
 }
 /*calculates total priority of patient, then pushes patient into queue*/
 void Conditions::addPatienttoqueue(){
+  if (thepatient->condition==0) return;
   thepatient->totalP=thepatient->condition->priority + thepatient->pain;
-  
+
   queue1.push(thepatient);
 
   cout<<"Entered "<<queue1.top()->name<<" to queue."<<endl;
@@ -625,16 +643,19 @@ void Conditions::updateQueue(){
     patient* temp=queue1.top();
     queue1.pop();
     temp->totalP+=10;
+    if (temp->totalP>=100){
+      temp->totalP=100;
+    }
     newqueue.push(temp);//pushes updated patient into new queue
   }
   queue1=newqueue;
 }
 /*pops each patient from queue, prints patient, puts back in new queue*/
 void Conditions::printOrder(){
-  //priority_queue<patient*, vector<patient*>, Compare2> newqueue = queue;
-  while(!queue1.empty()){
-    cout<<'.'<<queue1.top()->name<<endl;
-    queue1.pop();
+  priority_queue<patient*, vector<patient*>, Compare2> newqueue = queue1;
+  while(!newqueue.empty()){
+    cout<<newqueue.top()->name<<endl;
+    newqueue.pop();
   }
 }
 
