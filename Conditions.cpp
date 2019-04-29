@@ -274,6 +274,7 @@ void Conditions::menu(){
     }
     else if (a == 3){
       printOrder();
+      cout<<"here"<<endl;
     }
     else{
       return;
@@ -602,38 +603,38 @@ void Conditions::resetPercentage(){
 /*pops patient from queue and updates queue*/
 void Conditions::treatPatient(){
   patient* temp;
-  temp=queue.top();
-  queue.pop();
+  temp=queue1.top();
+  queue1.pop();
   cout<<"Now treating patient "<<temp->name<<endl;
   updateQueue();
-  cout<<"Next patient (predicted): "<<queue.top()->name<<endl;
+  cout<<"Next patient (predicted): "<<queue1.top()->name<<endl;
 }
 /*calculates total priority of patient, then pushes patient into queue*/
 void Conditions::addPatienttoqueue(){
   thepatient->totalP=thepatient->condition->priority + thepatient->pain;
-  patient add= *thepatient;
-  queue.push(&add);
-  cout<<"Entered "<<queue.top()->name<<" to queue."<<endl;
+  
+  queue1.push(thepatient);
 
+  cout<<"Entered "<<queue1.top()->name<<" to queue."<<endl;
   //cout<<"queue size is "<<queue.size()<<endl;
 }
 /*adds 10 to the priority to all patients already in queue*/
 void Conditions::updateQueue(){
-  priority_queue<patient*, vector<patient*>, Compare2> newqueue = queue;
-  for(int i=0; i<queue.size(); i++){
-    patient* temp=queue.top();
-    queue.pop();
+  priority_queue<patient*, vector<patient*>, Compare2> newqueue = queue1;
+  for(int i=0; i<queue1.size(); i++){
+    patient* temp=queue1.top();
+    queue1.pop();
     temp->totalP+=10;
     newqueue.push(temp);//pushes updated patient into new queue
   }
-  queue=newqueue;
+  queue1=newqueue;
 }
 /*pops each patient from queue, prints patient, puts back in new queue*/
 void Conditions::printOrder(){
   //priority_queue<patient*, vector<patient*>, Compare2> newqueue = queue;
-  while(!queue.empty()){
-    cout<<'.'<<queue.top()->name<<endl;
-    queue.pop();
+  while(!queue1.empty()){
+    cout<<'.'<<queue1.top()->name<<endl;
+    queue1.pop();
   }
 }
 
@@ -649,7 +650,7 @@ void Conditions::system(){
       menu();
     }
     else if (c==2){
-      if (queue.size()==0){
+      if (queue1.size()==0){
         cout<<"There are no patients queued up at the moment."<<endl;
       }
       else {

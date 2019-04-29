@@ -90,7 +90,7 @@ public:
   priority_queue<condition*, std::vector<condition*>, Compare1> getBestMatchConditions();
   void writeDescription();//WORKS
 
-  priority_queue<patient*, vector<patient*>, Compare2> queue;
+  priority_queue<patient*, vector<patient*>, Compare2> queue1;
   void treatPatient();
   void addPatienttoqueue();
   void updateQueue();
