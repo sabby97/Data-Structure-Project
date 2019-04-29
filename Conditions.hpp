@@ -20,12 +20,8 @@ struct condition{
   float percentage=0;
   set <symptom*> symptoms;
   condition* next = 0;
-  //bool operator < (const condition& c2){
-    //return (percentage<c2.percentage);
-  //}
 };
 //operator overload
-
 
 struct patient{
   string name;
@@ -33,11 +29,25 @@ struct patient{
   condition* condition;
   int pain;
   int totalP; // total priority, priority of the disease plus the pain level
-  //bool operator < (const patient& p2){
-  //  return (totalP<p2.totalP);
-  //}
 };
 
+class Compare1
+{
+public:
+    bool operator() (condition* v1, condition* v2)
+    {
+        return v1->percentage > v2->percentage;
+    }
+};
+
+class Compare2
+{
+public:
+    bool operator() (patient* v1, patient* v2)
+    {
+        return v1->totalP > v2->totalP;
+    }
+};
 
 
 
@@ -76,11 +86,11 @@ public:
   set<symptom*> getIntersection(set<symptom*> set1, set<symptom*> set2);
   set<condition*> getUnion(set<condition*> set1, set<condition*> set2);
   float getPercentage(set<symptom*> intersect);
-  void analyzeMatchedConditions(priority_queue<condition*> Q);
-  priority_queue<condition*> getBestMatchConditions();
+  void analyzeMatchedConditions(priority_queue<condition*, std::vector<condition*>, Compare1> Q);
+  priority_queue<condition*, std::vector<condition*>, Compare1> getBestMatchConditions();
   void writeDescription();//WORKS
 
-  priority_queue<patient*> queue;
+  priority_queue<patient*, vector<patient*>, Compare2> queue;
   void treatPatient();
   void addPatienttoqueue();
   void updateQueue();
